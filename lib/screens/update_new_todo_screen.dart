@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 class UpdateNewTodoScreen extends StatefulWidget {
   const UpdateNewTodoScreen({super.key});
 
-
-
   @override
   State<UpdateNewTodoScreen> createState() => _UpdateNewTodoScreenState();
 }
