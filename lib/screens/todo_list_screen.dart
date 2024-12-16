@@ -59,7 +59,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                             _deleteTodo(index);
                           },
                           icon: const Icon(Icons.delete)),
-                      IconButton(onPressed: () => _showChangeStatusDilog(index),
+                      IconButton(
+                          onPressed: () => _showChangeStatusDilog(index),
                           icon: const Icon(Icons.edit))
                     ],
                   ),
@@ -67,7 +68,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const UpdateNewTodoScreen()));
+                            builder: (context) => UpdateNewTodoScreen(
+                                  todo: todo,
+                                  onUpdateTodo:
+                                      ( Todo UpdatedTodo) {
+                                        _updateTodo(index, UpdatedTodo);
+                                    
+                                      },
+                                )));
                   });
             }),
       ),
@@ -122,7 +130,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         });
   }
 
-  void _ontapupdateStatusButton(int index, TodoStatus status){
+  void _ontapupdateStatusButton(int index, TodoStatus status) {
     _updateTodoStatus(index, status);
     Navigator.pop(context);
   }

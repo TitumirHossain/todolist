@@ -1,17 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/screens/todo.dart';
 
 class UpdateNewTodoScreen extends StatefulWidget {
-  const UpdateNewTodoScreen({super.key});
+  const UpdateNewTodoScreen({
+    super.key,
+    required this.todo,
+    required this.onUpdateTodo
+  });
+
+
+  final Todo todo;
+  final Function(Todo) onUpdateTodo;
 
   @override
   State<UpdateNewTodoScreen> createState() => _UpdateNewTodoScreenState();
 }
 
-final TextEditingController _titleTEController = TextEditingController();
-final TextEditingController _descriptionTEController = TextEditingController();
-final GlobalKey<FormState> _fromKey = GlobalKey<FormState>();
+
 
 class _UpdateNewTodoScreenState extends State<UpdateNewTodoScreen> {
+  final TextEditingController _titleTEController = TextEditingController();
+  final TextEditingController _descriptionTEController = TextEditingController();
+  final GlobalKey<FormState> _fromKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+
+    super.initState();
+    _titleTEController.text= widget.todo.title;
+    _descriptionTEController.text=widget.todo.description;
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +76,13 @@ class _UpdateNewTodoScreenState extends State<UpdateNewTodoScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if(_fromKey.currentState!.validate()){
+                        Todo todo = Todo(
+                          title: _titleTEController.text.trim(),
+                          description: _descriptionTEController.text.trim(),
+                          status: widget.todo.status
+                        );
+                        widget.onUpdateTodo(todo);
+                        Navigator.pop(context);
 
                       }
                     },
