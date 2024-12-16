@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -116,37 +118,69 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
             },
           ),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () {
-            if(_formkey.currentState!.validate()){
-
-            }
-          }, child: const Text('Add Product'))
+          Visibility(
+            visible: _addNewProductInProgress== false,
+            replacement: Center(
+              child: CircularProgressIndicator(),
+            ),
+            child: ElevatedButton(
+                onPressed: () {
+                  if (_formkey.currentState!.validate()) {
+                    _addNewProduct();
+                  }
+                },
+                child: const Text('Add Product')),
+          )
         ],
       ),
     );
   }
 
-  Future<void> _addNewProduct() async{
+  Future<void> _addNewProduct() async {
     _addNewProductInProgress = true;
-    setState(() {
-
-    });
+    setState(() {});
     Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/CreateProduct');
 
     Map<String, dynamic> requestBody = {
       "Img": _imageTEController.text.trim(),
-      "ProductCode":_codeTEController.text.trim(),
-      "ProductName":_nameTEController.text.trim(),
-      "Qty":_quantityTEController.text.trim(),
-      "TotalPrice":_totalPriceTEController.text.trim(),
-      "UnitPrice":_priceTEController.text.trim(),
-
+      "ProductCode": _codeTEController.text.trim(),
+      "ProductName": _nameTEController.text.trim(),
+      "Qty": _quantityTEController.text.trim(),
+      "TotalPrice": _totalPriceTEController.text.trim(),
+      "UnitPrice": _priceTEController.text.trim(),
     };
 
-    Response response = await post(uri);
-
+    Response response = await post(uri,
+        headers: {'Content-type': 'application/json'},
+        body: jsonEncode(requestBody));
+    print(response.statusCode);
+    print(response.body);
+    _addNewProductInProgress = false;
+    setState(() {});
+    if (response.statusCode == 200) {
+      _clearTestField();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('New Product Added'),
+        ),
+      );
+    } else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('New Product failed! Try Again.'),
+        ),
+      );
+    }
   }
 
+  void _clearTestField() {
+    _nameTEController.clear();
+    _codeTEController.clear();
+    _priceTEController.clear();
+    _totalPriceTEController.clear();
+    _imageTEController.clear();
+    _quantityTEController.clear();
+  }
 
   @override
   void dispose() {
