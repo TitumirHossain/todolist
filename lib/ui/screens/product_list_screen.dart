@@ -15,6 +15,7 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   List<Product> productList= [];
+  bool _getProductListInProgress = false;
 
 
   @override
@@ -29,13 +30,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
       appBar: AppBar(
         title: Text('Product List'),
       ),
-      body: ListView.builder(
-        itemCount: productList.length,
-          itemBuilder: (context, index) {
-        return ProductItem(
-          product: productList[index],
-        );
-      }
+      body: Visibility(
+        visible: _getProductListInProgress == false,
+        replacement: Center(
+          child: CircularProgressIndicator(),
+        ),
+        child: ListView.builder(
+          itemCount: productList.length,
+            itemBuilder: (context, index) {
+          return ProductItem(
+            product: productList[index],
+          );
+        }
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
@@ -47,6 +54,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _getProductList() async {
+    _getProductListInProgress = true;
+    setState(() {});
     Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/ReadProduct');
     Response response = await get(uri);
     print(response.statusCode);
@@ -71,5 +80,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
       });
     }
+    _getProductListInProgress = false;
+    setState(() {});
   }
 }
